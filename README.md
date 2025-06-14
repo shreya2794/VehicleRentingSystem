@@ -21,9 +21,12 @@ This is a console-based C++ project that simulates a simple vehicle rental syste
 - **Constructor Overloading**
 - **Getters and Setters**
 
-## 🛠️ How to Run (VS Code)
-1. Open this folder in VS Code
-2. Compile: `g++ main.cpp -o main.exe`
-3. Run: `./main.exe` or `main.exe`
+### Day 2 : MIT License and badge
+
+![GitHub Repo stars](https://img.shields.io/github/stars/shreya2794/VehicleRentingSystem?style=social)
+![GitHub forks](https://img.shields.io/github/forks/shreya2794/VehicleRentingSystem?style=social)
+![GitHub last commit](https://img.shields.io/github/last-commit/shreya2794/VehicleRentingSystem)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+
 
 
