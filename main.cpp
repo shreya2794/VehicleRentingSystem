@@ -155,6 +155,111 @@ public:
     }
 };
 
+//DAY 4 
+
+// Check if ID is unique
+bool isUniqueID(const vector<Vehicle*>& vehicles, const string& id) {
+    for (const auto& v : vehicles) {
+        if (v->getID() == id)
+            return false;
+    }
+    return true;
+}
+
+// ADMIN MENU
+void adminMenu(vector<Vehicle*>& vehicles) {
+    int choice;
+    do {
+        cout << "\n--- Admin Menu ---\n";
+        cout << "1. Add Vehicle\n2. View All Vehicles\n0. Exit\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                int typeChoice;
+                cout << "Add:\n1. Car\n2. Bike\nEnter choice: ";
+                cin >> typeChoice;
+
+                string id, brand;
+                float rent;
+
+                while (true) {
+                    cout << "Enter ID (start with 'C' for Car or 'B' for Bike): ";
+                    cin >> id;
+
+                    // Validate prefix
+                    if ((typeChoice == 1 && id[0] != 'C') || (typeChoice == 2 && id[0] != 'B')) {
+                        cout << "❌ Invalid ID prefix. Car ID must start with 'C', Bike with 'B'. Try again.\n";
+                        continue;
+                    }
+
+                    // Check for uniqueness
+                    if (!isUniqueID(vehicles, id)) {
+                        cout << "❌ Vehicle ID already exists. Try again.\n";
+                        continue;
+                    }
+
+                    break;  // Valid ID
+                }
+
+                cout << "Enter Brand: ";
+                cin >> brand;
+                cout << "Enter Rent per Day: ";
+                cin >> rent;
+
+                if (typeChoice == 1) {
+                    int seats;
+                    cout << "Enter Number of Seats: ";
+                    cin >> seats;
+                    vehicles.push_back(new Car(id, brand, rent, seats));
+                } else if (typeChoice == 2) {
+                    bool carrier;
+                    cout << "Has Carrier (1 for Yes, 0 for No): ";
+                    cin >> carrier;
+                    vehicles.push_back(new Bike(id, brand, rent, carrier));
+                }
+
+                FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
+                cout << "✅ Vehicle added successfully.\n";
+                break;
+            }
+
+            case 2: {
+                cout << "\n Cars:\n";
+                for (const auto& v : vehicles) {
+                    if (Car* car = dynamic_cast<Car*>(v)) {
+                        cout << car->getID() << " | " << car->getBrand()
+                             << " | ₹" << car->getRentPerDay()
+                             << " | " << (car->getAvailability() ? "Available" : "Rented")
+                             << " | Seats: " << car->getSeats() << endl;
+                    }
+                }
+
+                cout << "\n Bikes:\n";
+                for (const auto& v : vehicles) {
+                    if (Bike* bike = dynamic_cast<Bike*>(v)) {
+                        cout << bike->getID() << " | " << bike->getBrand()
+                             << " | ₹" << bike->getRentPerDay()
+                             << " | " << (bike->getAvailability() ? "Available" : "Rented")
+                             << " | Carrier: " << (bike->hasCarrierFn() ? "Yes" : "No") << endl;
+                    }
+                }
+                break;
+            }
+
+            case 0:
+                cout << "Exiting Admin Menu.\n";
+                break;
+
+            default:
+                cout << "❌ Invalid choice. Please try again.\n";
+        }
+
+    } while (choice != 0);
+}
+
+
+
 // Main for testing
 int main() {
     vector<Vehicle*> vehicles;
@@ -162,11 +267,15 @@ int main() {
     // Load vehicles from file
     FileManager::loadVehiclesFromFile(vehicles, "vehicles.txt");
 
-    // If no vehicles loaded, add sample
-    if(vehicles.empty()){
-    vehicles.push_back(new Car("C101", "Honda City", 1200, 5));//new Car(...) and new Bike(...) dynamically allocate objects and return a pointer.Since Car and Bike are derived from Vehicle, the vector<Vehicle*> can hold them.This is an example of upcasting — storing derived class objects in base class pointers.
-    vehicles.push_back(new Bike("B201", "Yamaha", 500, true));
-    }
+    //DAY 4
+    adminMenu(vehicles);
+
+    //DAY 3
+    // // If no vehicles loaded, add sample
+    // if(vehicles.empty()){
+    // vehicles.push_back(new Car("C101", "Honda City", 1200, 5));//new Car(...) and new Bike(...) dynamically allocate objects and return a pointer.Since Car and Bike are derived from Vehicle, the vector<Vehicle*> can hold them.This is an example of upcasting — storing derived class objects in base class pointers.
+    // vehicles.push_back(new Bike("B201", "Yamaha", 500, true));
+    // }
 
     //This loop prints details of each vehicle and calculates rent for 3 days.
     for (auto v : vehicles) {
