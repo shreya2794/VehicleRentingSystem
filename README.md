@@ -84,10 +84,10 @@ This is a console-based C++ project that simulates a simple vehicle rental syste
 4. **FileManager Integration:**
    - `vehicles.txt` used to store and retrieve vehicle records.
    - Fully supports persistent data storage using `saveVehiclesToFile()` and `loadVehiclesFromFile()`.
-5. Files Modified:
+5. **Files Modified:**
   - `main.cpp` (Admin module, vehicle input/output)
   - `FileManager` class (load/save enhancements)
-  
+
 #### OOP Concepts Applied:
 - **Abstraction:** Admin functionality is abstracted inside `adminMenu()` function.
 - **Inheritance:** `Car` and `Bike` inherit from base class `Vehicle`.
