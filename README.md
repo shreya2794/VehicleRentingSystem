@@ -26,8 +26,7 @@ This is a console-based C++ project that simulates a simple vehicle rental syste
 - **Constructor Overloading**
 - **Getters and Setters**
 
-### Day 2 : MIT License and badge
-###         Progress: Inheritance, Polymorphism & Virtual Functions
+### Day 2 : Progress: Inheritance, Polymorphism & Virtual Functions, MIT License and badge
 
 Today, we implemented **Object-Oriented Programming (OOP)** principles such as **Inheritance**, **Polymorphism**, and **Virtual Functions** to enhance the structure of our Vehicle Rental System.
 
@@ -46,7 +45,7 @@ Today, we implemented **Object-Oriented Programming (OOP)** principles such as *
  - `.vscode/`: VS Code configuration files (auto-generated)
 
 
-### 🔁 Concepts Used
+### Concepts Used
 - **Inheritance**: `Car` and `Bike` classes inherit from `Vehicle`
 - **Polymorphism**: Runtime method dispatch using virtual functions
 - **Dynamic Memory Allocation**: Created objects using `new`
@@ -57,4 +56,24 @@ Today, we implemented **Object-Oriented Programming (OOP)** principles such as *
 
 #### 📝 License
 This project is licensed under the [MIT License](LICENSE).
+
+### Day 3: File Handling & Data Persistence
+
+### ✅ What Was Added
+- **FileManager class** to manage all file-related operations (save/load).
+- Vehicle data is now stored in `vehicles.txt` to retain entries across runs.
+- Used `dynamic_cast` to detect the correct derived type (Car/Bike) when saving/loading.
+- Files added
+ - `vehicles.txt`
+
+### OOP Concepts Used
+
+- **Inheritance**: `Car` and `Bike` inherit from `Vehicle`
+- **Polymorphism**: `displayDetails()` and `calculateRent()` overridden
+- **Encapsulation**: Getter/setter methods manage access
+- **Separation of Concerns**: FileManager handles file logic separately
+- **Dynamic Casting**: Used for identifying object type when saving to file
+- **Abstraction**: File I/O logic hidden inside `FileManager`
+
+
 
