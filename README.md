@@ -113,10 +113,6 @@ This is a console-based C++ project that simulates a simple vehicle rental syste
 - Encapsulation (used in `Customer` and `Vehicle` classes)
 - Dynamic memory allocation (`new` and `delete`)
 
-Files Modified:
-- `main.cpp` (all logic)
-- `vehicles.txt` (auto-updated for availability)
-
 #### 📝 License
 This project is licensed under the [MIT License](LICENSE)
 
