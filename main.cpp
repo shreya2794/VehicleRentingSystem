@@ -19,7 +19,7 @@ protected:
 
 public:
     // Default constructor
-    Vehicle() : vehicleID(0), brand(""), rentPerDay(0.0), isAvailable(true) {}
+    Vehicle() : vehicleID(""), brand(""), rentPerDay(0.0), isAvailable(true) {}
 
     // Parameterized constructor
     Vehicle(string id, string b, float rent, bool avail = true)
@@ -90,6 +90,35 @@ public:
 
 };
 
+// Customer class (day 5)
+class Customer{
+    string name;
+    string rentedVehicleID;
+    int rentDays;
+
+public:
+    Customer(string n) : name(n), rentedVehicleID(""), rentDays(0) {}
+
+    string getName() const { return name; }
+    string getRentedVehicleID() const { return rentedVehicleID; }
+    int getRentDays() const { return rentDays; }
+
+    void rentVehicle(const string& vid, int days) {
+        rentedVehicleID = vid;
+        rentDays = days;
+    }
+
+    void returnVehicle() {
+        rentedVehicleID = "";
+        rentDays = 0;
+    }
+
+    bool hasRented() const {
+        return !rentedVehicleID.empty();
+    }
+};
+
+// FileManager Class (day 4)
 class FileManager {
 public:
     static void saveVehiclesToFile(const vector<Vehicle*>& vehicles, const string& filename) {
@@ -189,13 +218,13 @@ void adminMenu(vector<Vehicle*>& vehicles) {
 
                     // Validate prefix
                     if ((typeChoice == 1 && id[0] != 'C') || (typeChoice == 2 && id[0] != 'B')) {
-                        cout << "❌ Invalid ID prefix. Car ID must start with 'C', Bike with 'B'. Try again.\n";
+                        cout << " Invalid ID prefix. Car ID must start with 'C', Bike with 'B'. Try again.\n";
                         continue;
                     }
 
                     // Check for uniqueness
                     if (!isUniqueID(vehicles, id)) {
-                        cout << "❌ Vehicle ID already exists. Try again.\n";
+                        cout << " Vehicle ID already exists. Try again.\n";
                         continue;
                     }
 
@@ -220,7 +249,7 @@ void adminMenu(vector<Vehicle*>& vehicles) {
                 }
 
                 FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
-                cout << "✅ Vehicle added successfully.\n";
+                cout << " Vehicle added successfully.\n";
                 break;
             }
 
@@ -252,13 +281,112 @@ void adminMenu(vector<Vehicle*>& vehicles) {
                 break;
 
             default:
-                cout << "❌ Invalid choice. Please try again.\n";
+                cout << " Invalid choice. Please try again.\n";
         }
 
     } while (choice != 0);
 }
 
+//DAY 5 CUSTOMER MENU
+// Customer Menu
+void customerMenu(vector<Vehicle*>& vehicles) {
+    string customerName;
+    cout << "\nEnter your name: ";
+    cin >> customerName;
+    Customer cust(customerName);
 
+    int choice;
+    do {
+        cout << "\n--- Customer Menu ---\n";
+        cout << "1. View Available Vehicles\n2. Rent Vehicle\n3. Return Vehicle\n0. Exit\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                cout << "\n======================== Cars ========================\n";
+                cout << "ID\tBrand\tRent/Day\tSeats\tStatus\n";
+                for (const auto& v : vehicles) {
+                   if (Car* car = dynamic_cast<Car*>(v)) {
+                       cout << car->getID() << "\t" << car->getBrand()
+                            << "\t₹" << car->getRentPerDay()
+                            << "\t\t" << car->getSeats()
+                            << "\t" << (car->getAvailability() ? "✅ Available" : "❌ Rented") << endl;
+                    }
+                }
+
+                cout << "\n======================== Bikes =======================\n";
+                cout << "ID\tBrand\tRent/Day\tCC\tStatus\n";
+                for (const auto& v : vehicles) {
+                   if (Bike* bike = dynamic_cast<Bike*>(v)) {
+                      cout << bike->getID() << "\t" << bike->getBrand()
+                           << "\t₹" << bike->getRentPerDay()
+                           << "\t\t" << (bike->hasCarrierFn() ? "Yes" : "No")
+                           << "\t" << (bike->getAvailability() ? "✅ Available" : "❌ Rented") << endl;
+                    }
+                }
+            }
+
+            case 2: {
+                if (cust.hasRented()) {
+                    cout << "Already rented vehicle: " << cust.getRentedVehicleID() << endl;
+                    break;
+                }
+
+                string rentID;
+                int days;
+                cout << "Enter Vehicle ID to Rent: ";
+                cin >> rentID;
+
+                bool found = false;
+                for (auto& v : vehicles) {
+                    if (v->getID() == rentID && v->getAvailability()) {
+                        cout << "Enter number of days: ";
+                        cin >> days;
+                        int totalRent = v->calculateRent(days);
+                        cout << " Vehicle rented! Total Rent: ₹" << totalRent << endl;
+                        v->setAvailability(false);
+                        cust.rentVehicle(rentID, days);
+                        FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    cout << "Vehicle not found or unavailable.\n";
+                }
+
+                break;
+            }
+
+            case 3: {
+                if (!cust.hasRented()) {
+                    cout << "No rented vehicle to return.\n";
+                    break;
+                }
+
+                string rentedID = cust.getRentedVehicleID();
+                for (auto& v : vehicles) {
+                    if (v->getID() == rentedID) {
+                        v->setAvailability(true);
+                        cout << "Vehicle returned.\n";
+                        FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
+                        break;
+                    }
+                }
+                cust.returnVehicle();
+                break;
+            }
+
+            case 0:
+                cout << "Exiting Customer Menu.\n";
+                break;
+
+            default:
+                cout << "Invalid choice.\n";
+        }
+    } while (choice != 0);
+}
 
 // Main for testing
 int main() {
@@ -267,8 +395,17 @@ int main() {
     // Load vehicles from file
     FileManager::loadVehiclesFromFile(vehicles, "vehicles.txt");
 
+    //DAY 5
+    int userType;
+    cout << "Login as:\n1. Admin\n2. Customer\nEnter choice: ";
+    cin >> userType;
+
+    if (userType == 1) adminMenu(vehicles);
+    else if (userType == 2) customerMenu(vehicles);
+    else cout << "Invalid choice.\n";
+
     //DAY 4
-    adminMenu(vehicles);
+    //adminMenu(vehicles);
 
     //DAY 3
     // // If no vehicles loaded, add sample
@@ -277,11 +414,12 @@ int main() {
     // vehicles.push_back(new Bike("B201", "Yamaha", 500, true));
     // }
 
-    //This loop prints details of each vehicle and calculates rent for 3 days.
-    for (auto v : vehicles) {
-        v->displayDetails();//Even though v is of type Vehicle*, the correct overridden function in Car or Bike is called at runtime — this is runtime polymorphism in action.
-        cout << "Rent for 3 days: " << v->calculateRent(3) << "\n\n";
-    }
+    // //DAY 2
+    // //This loop prints details of each vehicle and calculates rent for 3 days.
+    // for (auto v : vehicles) {
+    //     v->displayDetails();//Even though v is of type Vehicle*, the correct overridden function in Car or Bike is called at runtime — this is runtime polymorphism in action.
+    //     cout << "Rent for 3 days: " << v->calculateRent(3) << "\n\n";
+    // }
 
     // Save to file
     FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");

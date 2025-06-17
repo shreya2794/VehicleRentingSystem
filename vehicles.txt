@@ -1,3 +1,5 @@
+Car/Bike,ID,Brand,Rent,Availability,Seats/Carrier
+
 Car,C101,Honda City,1200,1,5
 Bike,B201,Yamaha,500,1,1
 Car,C103,BMW,10000,1,4

@@ -94,6 +94,29 @@ This is a console-based C++ project that simulates a simple vehicle rental syste
 - **Polymorphism:** Display and rent calculation methods are overridden in child classes.
 - **Separation of Concerns:** File handling separated via the `FileManager` class.
 
+### Day 5: Customer Module: View/Search/Rent/Return Vehicles
+
+#### ✅ Features Implemented:
+- Created `Customer` class to manage individual customer actions
+- Customer functionality added:
+  - View all vehicles with **availability status**
+  - Rent a vehicle by ID
+  - Return a rented vehicle
+- Vehicle availability updates saved to `vehicles.txt`
+- Files Modified:
+  - `main.cpp` (all logic)
+  - `vehicles.txt` (auto-updated for availability) 
+
+#### OOP Concepts Applied:
+- Inheritance (`Car` and `Bike` inherit from `Vehicle`)
+- Polymorphism (`displayDetails()` and `calculateRent()` are overridden)
+- Encapsulation (used in `Customer` and `Vehicle` classes)
+- Dynamic memory allocation (`new` and `delete`)
+
+Files Modified:
+- `main.cpp` (all logic)
+- `vehicles.txt` (auto-updated for availability)
+
 #### 📝 License
 This project is licensed under the [MIT License](LICENSE)
 
