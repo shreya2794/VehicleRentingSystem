@@ -113,6 +113,36 @@ This is a console-based C++ project that simulates a simple vehicle rental syste
 - Encapsulation (used in `Customer` and `Vehicle` classes)
 - Dynamic memory allocation (`new` and `delete`)
 
+### Day 6 Rental History
+
+#### ✅ Features Implemented:
+
+1. Customer Enhancements:
+- Added phone number field to `Customer` class.
+- Captured both **name** and **phone number** when a customer logs in.
+- Used `getline()` for proper input of full names and phone numbers.
+2. Rental Tracking Improvements:
+- Rental entries now include **customer name, phone number, vehicle ID, date, days, action**.
+- On return, the system reads `current_rentals.txt` to check if the customer has a pending rental.
+- Vehicle availability is updated based on file tracking.
+3. Menu Flow Enhancements:
+- Main login menu loops until valid input (Admin/Customer/Exit).
+- After Admin or Customer menu exits, control returns to login menu.
+- Handled invalid input using `cin.clear()` and `cin.ignore()`.
+4. Files Modified:
+- `main.cpp`
+- `Customer.h / Customer.cpp`
+- `FileManager.h / FileManager.cpp`
+- `rental_history.txt` (updated format)
+- `vehicles.txt` (availability flags updated)
+- `current_rentals.txt`(added new)
+
+#### OOP Concepts Applied:
+- Class encapsulation (`Customer`, `Vehicle`, `Car`, `Bike`, `FileManager`)
+- Polymorphism using `Vehicle*` with `dynamic_cast`
+- Constructor overloading (`Customer` with name + phone)
+- Separation of concerns in file handling and UI
+
 #### 📝 License
 This project is licensed under the [MIT License](LICENSE)
 
