@@ -1,0 +1,7 @@
+Shreya Dandale,8767723453,B202,Wed Jun 18 23:34:59 2025,6,Rented
+Shreya Dandale,8767723453,B202,Wed Jun 18 23:36:17 2025,0,Returned
+Vidya ,9860950712,C103,Wed Jun 18 23:37:33 2025,6,Rented
+Vidya ,9860950712,C103,Wed Jun 18 23:37:57 2025,0,Returned
+Sneha ,9011926873,C101,Wed Jun 18 23:39:22 2025,1,Rented
+Raj Patil,9876543210,C105,Wed Jun 18 23:51:41 2025,9,Rented
+Raj Patil,9876543210,C105,Wed Jun 18 23:53:06 2025,0,Returned

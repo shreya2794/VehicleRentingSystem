@@ -3,10 +3,15 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <ctime> // for time functions
+#include <cstring> // for strlen
+
 
 using namespace std;
 
 // Forward Declaration for later use
+//if sometimes we call a function before defining it like I wrote function resetAllVehicles later and called it before in the admin menu so it will show an error like function not defined in scope so we have to ways like first is to write that function earlier or before admin menu or to forward declare that 
+//This tells the compiler the function will be defined later.
 class Customer;
 
 class Vehicle {
@@ -93,28 +98,77 @@ public:
 // Customer class (day 5)
 class Customer{
     string name;
+    string phoneNumber; //If you store this in an int or long, the leading 0 is lost. // Phone Numbers Are Not Used for Calculations9They're identifiers, not numeric values.) //Country codes, dashes, brackets, or spaces: //An int can’t hold such large numbers:                     
     string rentedVehicleID;
     int rentDays;
 
 public:
-    Customer(string n) : name(n), rentedVehicleID(""), rentDays(0) {}
+    Customer(string n, string phone = "") : name(n), phoneNumber(phone), rentedVehicleID(""), rentDays(0) {
+        loadRental();  // Try loading any existing rental
+    }
 
     string getName() const { return name; }
+    string getPhone() const { return phoneNumber; }
     string getRentedVehicleID() const { return rentedVehicleID; }
     int getRentDays() const { return rentDays; }
+
+    bool hasRented() const {
+        return !rentedVehicleID.empty();
+    }
 
     void rentVehicle(const string& vid, int days) {
         rentedVehicleID = vid;
         rentDays = days;
+        saveRental();  // Save to file
     }
 
     void returnVehicle() {
         rentedVehicleID = "";
         rentDays = 0;
+        removeRental();  // Remove from file
     }
 
-    bool hasRented() const {
-        return !rentedVehicleID.empty();
+     void saveRental() {
+        ofstream out("current_rentals.txt", ios::app);
+        out << name << "," << phoneNumber << "," << rentedVehicleID << "," << rentDays << "\n";
+        out.close();
+    }
+
+    void loadRental() {
+        ifstream in("current_rentals.txt");
+        string line;
+        while (getline(in, line)) {
+            stringstream ss(line);
+            string n, phone, vid, daysStr;
+            getline(ss, n, ',');
+            getline(ss, phone, ',');
+            getline(ss, vid, ',');
+            getline(ss, daysStr, ',');
+
+            if (n == name && phone == phoneNumber) {
+                rentedVehicleID = vid;
+                rentDays = stoi(daysStr);
+                break;
+            }
+        }
+        in.close();
+    }
+
+    void removeRental() {
+        ifstream in("current_rentals.txt");
+        vector<string> lines;
+        string line;
+        while (getline(in, line)) {
+            if (line.find(name + "," + phoneNumber + "," + rentedVehicleID) != 0) {
+                lines.push_back(line);
+            }
+        }
+        in.close();
+
+        ofstream out("current_rentals.txt");
+        for (const auto& l : lines)
+            out << l << "\n";
+        out.close();
     }
 };
 
@@ -184,6 +238,78 @@ public:
     }
 };
 
+//DAY 6
+// Rental History
+void logRentalHistory(const string& customerName, const string& phone, const string& vehicleID, int days, const string& action) {
+    ofstream logFile("rental_history.txt", ios::app); // append mode
+    if (!logFile) {
+        cerr << "Error opening rental history file.\n";
+        return;
+    }
+
+    // Get current date and time
+    time_t now = time(0);
+    char* dt = ctime(&now); // formatted string with \n
+    dt[strlen(dt) - 1] = '\0'; // remove the newline character
+
+    // Log format: Customer, Vehicle ID, DateTime, Days, Action
+    logFile << customerName << ","  << phone << "," << vehicleID << "," << dt << "," << days << "," << action << "\n";
+    logFile.close();
+}
+
+// automatically update vehicle availability at program startup by reading from current_rentals.txt.
+void updateVehicleAvailabilityFromCurrentRentals(vector<Vehicle*>& vehicles) {
+    ifstream in("current_rentals.txt");
+    if (!in.is_open()) return;
+
+    string line;
+    while (getline(in, line)) {
+        stringstream ss(line);
+        string name, phone, vehicleID, daysStr;
+
+        getline(ss, name, ',');
+        getline(ss, phone, ',');
+        getline(ss, vehicleID, ',');
+        getline(ss, daysStr, ',');
+
+        // Mark this vehicle as unavailable
+        for (auto& v : vehicles) {
+            if (v->getID() == vehicleID) {
+                v->setAvailability(false);
+                break;
+            }
+        }
+    }
+
+    in.close();
+}
+
+// automatically remove an entry from current_rentals.txt when a return happens, so everything stays clean
+void removeFromCurrentRentals(const string& name, const string& phone) {
+    ifstream inFile("current_rentals.txt");
+    ofstream tempFile("temp.txt");
+
+    string line;
+    while (getline(inFile, line)) {
+        stringstream ss(line);
+        string fileName, filePhone;
+        getline(ss, fileName, ',');
+        getline(ss, filePhone, ',');
+
+        // If not the returning customer, keep the line
+        if (fileName != name || filePhone != phone) {
+            tempFile << line << endl;
+        }
+    }
+
+    inFile.close();
+    tempFile.close();
+
+    // Replace original file with updated temp file
+    remove("current_rentals.txt");
+    rename("temp.txt", "current_rentals.txt");
+}
+
 //DAY 4 
 
 // Check if ID is unique
@@ -195,12 +321,14 @@ bool isUniqueID(const vector<Vehicle*>& vehicles, const string& id) {
     return true;
 }
 
+
 // ADMIN MENU
 void adminMenu(vector<Vehicle*>& vehicles) {
+    
     int choice;
     do {
         cout << "\n--- Admin Menu ---\n";
-        cout << "1. Add Vehicle\n2. View All Vehicles\n0. Exit\nEnter choice: ";
+        cout << "1. Add Vehicle\n2. View All Vehicles\n3. View Rental History\n0. Exit\nEnter choice: ";
         cin >> choice;
 
         switch (choice) {
@@ -232,7 +360,8 @@ void adminMenu(vector<Vehicle*>& vehicles) {
                 }
 
                 cout << "Enter Brand: ";
-                cin >> brand;
+                cin.ignore(); // Clears leftover newline character from previous input
+                getline(cin, brand); // Reads the full brand name including spaces
                 cout << "Enter Rent per Day: ";
                 cin >> rent;
 
@@ -276,12 +405,42 @@ void adminMenu(vector<Vehicle*>& vehicles) {
                 break;
             }
 
+            case 3: {
+                ifstream logFile("rental_history.txt");
+                if (!logFile) {
+                    cout << "No rental history found.\n";
+                    break;
+                }
+
+                string line;
+                cout << "\n--- Rental History ---\n";
+                while (getline(logFile, line)) {
+                   stringstream ss(line);
+                   string name, phone, id, datetime, days, action;
+
+                   getline(ss, name, ',');
+                   getline(ss, phone, ',');
+                   getline(ss, id, ',');
+                   getline(ss, datetime, ',');
+                   getline(ss, days, ',');
+                   getline(ss, action, ',');
+
+                   cout << "Customer: " << name << ", Phone: " << phone <<", Vehicle ID: " << id
+                        << ", Date: " << datetime << ", Days: " << days
+                        << ", Action: " << action << "\n";
+                }
+
+                logFile.close();
+                break;
+            } 
             case 0:
                 cout << "Exiting Admin Menu.\n";
                 break;
-
+                
             default:
                 cout << " Invalid choice. Please try again.\n";
+                cin.clear(); // clear error flag // clears the error state if a non-numeric input was entered.
+                cin.ignore(10000, '\n'); // discard invalid input // s5kips leftover input, preventing infinite loops.
         }
 
     } while (choice != 0);
@@ -290,10 +449,14 @@ void adminMenu(vector<Vehicle*>& vehicles) {
 //DAY 5 CUSTOMER MENU
 // Customer Menu
 void customerMenu(vector<Vehicle*>& vehicles) {
-    string customerName;
+    string customerName, phone;
+    cin.ignore(); 
     cout << "\nEnter your name: ";
-    cin >> customerName;
-    Customer cust(customerName);
+    getline(cin, customerName);
+    cout << "Enter your phone number: ";
+    getline(cin, phone);
+    
+    Customer cust(customerName, phone); //Pass phone and name to constructor
 
     int choice;
     do {
@@ -304,26 +467,25 @@ void customerMenu(vector<Vehicle*>& vehicles) {
         switch (choice) {
             case 1: {
                 cout << "\n======================== Cars ========================\n";
-                cout << "ID\tBrand\tRent/Day\tSeats\tStatus\n";
                 for (const auto& v : vehicles) {
-                   if (Car* car = dynamic_cast<Car*>(v)) {
-                       cout << car->getID() << "\t" << car->getBrand()
-                            << "\t₹" << car->getRentPerDay()
-                            << "\t\t" << car->getSeats()
-                            << "\t" << (car->getAvailability() ? "✅ Available" : "❌ Rented") << endl;
+                    if (Car* car = dynamic_cast<Car*>(v)) {
+                        cout << car->getID() << " | " << car->getBrand()
+                             << " | ₹" << car->getRentPerDay()
+                             << " | Seats: " << car->getSeats() 
+                             << " | " << (car->getAvailability() ? "✅ Available" : "❌ Rented")<< endl;
                     }
                 }
-
                 cout << "\n======================== Bikes =======================\n";
-                cout << "ID\tBrand\tRent/Day\tCC\tStatus\n";
                 for (const auto& v : vehicles) {
-                   if (Bike* bike = dynamic_cast<Bike*>(v)) {
-                      cout << bike->getID() << "\t" << bike->getBrand()
-                           << "\t₹" << bike->getRentPerDay()
-                           << "\t\t" << (bike->hasCarrierFn() ? "Yes" : "No")
-                           << "\t" << (bike->getAvailability() ? "✅ Available" : "❌ Rented") << endl;
+                    if (Bike* bike = dynamic_cast<Bike*>(v)) {
+                        cout << bike->getID() << " | " << bike->getBrand()
+                             << " | ₹" << bike->getRentPerDay()
+                             << " | Carrier: " << (bike->hasCarrierFn() ? "Yes" : "No") 
+                             << " | " << (bike->getAvailability() ? "✅ Available" : "❌ Rented")<< endl;
+                             
                     }
                 }
+                break;
             }
 
             case 2: {
@@ -347,6 +509,8 @@ void customerMenu(vector<Vehicle*>& vehicles) {
                         v->setAvailability(false);
                         cust.rentVehicle(rentID, days);
                         FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
+                        // Log the rental
+                        logRentalHistory(cust.getName(), cust.getPhone(), rentID, days, "Rented");
                         found = true;
                         break;
                     }
@@ -371,10 +535,12 @@ void customerMenu(vector<Vehicle*>& vehicles) {
                         v->setAvailability(true);
                         cout << "Vehicle returned.\n";
                         FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
+                        logRentalHistory(cust.getName(), cust.getPhone(), rentedID, 0, "Returned");
                         break;
                     }
                 }
-                cust.returnVehicle();
+                cust.returnVehicle();// Remove from currnt_rentals.txt
+                removeFromCurrentRentals(cust.getName(), cust.getPhone());
                 break;
             }
 
@@ -383,10 +549,13 @@ void customerMenu(vector<Vehicle*>& vehicles) {
                 break;
 
             default:
-                cout << "Invalid choice.\n";
+                cout << " Invalid choice. Please try again.\n";
+                cin.clear(); // clear error flag
+                cin.ignore(10000, '\n'); // discard invalid input
         }
     } while (choice != 0);
 }
+
 
 // Main for testing
 int main() {
@@ -395,14 +564,34 @@ int main() {
     // Load vehicles from file
     FileManager::loadVehiclesFromFile(vehicles, "vehicles.txt");
 
+    // 🔄 Mark rented vehicles as unavailable based on current rentals
+    updateVehicleAvailabilityFromCurrentRentals(vehicles);
+
     //DAY 5
     int userType;
-    cout << "Login as:\n1. Admin\n2. Customer\nEnter choice: ";
+    while (true) { //DAY 6 To ensure that invalid input doesn't exit the program, but instead returns to the same menu
+    cout << "Login as:\n1. Admin\n2. Customer\n0. Exit\nEnter choice: ";
     cin >> userType;
 
-    if (userType == 1) adminMenu(vehicles);
-    else if (userType == 2) customerMenu(vehicles);
-    else cout << "Invalid choice.\n";
+    switch (userType) {
+        case 1:
+            adminMenu(vehicles);
+            break; 
+        case 2:
+            customerMenu(vehicles);
+            break; 
+        case 0:
+            cout << "Exiting program.\n";
+            for (auto v : vehicles)
+            delete v;
+            return 0;
+        default:
+            cout << " Invalid choice. Please enter 1 or 2.\n";
+            cin.clear();
+            cin.ignore(10000, '\n');
+            break;
+    }
+}
 
     //DAY 4
     //adminMenu(vehicles);
@@ -424,9 +613,10 @@ int main() {
     // Save to file
     FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
 
-    // Clean up
-    for (auto v : vehicles)
-        delete v;
+    //Day 6 cleared and added in case 0
+    // // Clean up
+    // for (auto v : vehicles)
+    //     delete v;
 
     return 0;
 }
