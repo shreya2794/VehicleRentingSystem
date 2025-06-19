@@ -1,1 +1,44 @@
-Harshada Raut,321654987,B202,6,1200,7200,1,100,Thu Jun 19 14:03:23 2025
+
+--- Final Bill ---
+Customer: Saru | Phone: 7418529630
+Vehicle ID: B201
+Days Kept: 6 (Expected: 5)
+Rent per Day: ₹500
+Base Rent: ₹3000
+Late Fee (20% per late day): ₹100
+Total Bill: ₹3100
+
+Note:
+• Late returns incur 20% extra rent/day.
+• Early returns charge half-day rent as penalty.
+
+------------------------------------
+
+--- Final Bill ---
+Customer: Saru | Phone: 7418529630
+Vehicle ID: B202
+Days Kept: 2 (Expected: 4)
+Rent per Day: ₹1200
+Base Rent: ₹2400
+Early Return Penalty (Half Day Rent): ₹600
+Total Bill: ₹3000
+
+Note:
+• Late returns incur 20% extra rent/day.
+• Early returns charge half-day rent as penalty.
+
+------------------------------------
+
+--- Final Bill ---
+Customer: Vaibhavi | Phone: 9860950712
+Vehicle ID: B201
+Days Kept: 3 (Expected: 3)
+Rent per Day: ₹500
+Base Rent: ₹1500
+Total Bill: ₹1500
+
+Note:
+• Late returns incur 20% extra rent/day.
+• Early returns charge half-day rent as penalty.
+
+------------------------------------

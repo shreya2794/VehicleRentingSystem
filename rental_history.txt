@@ -10,3 +10,16 @@ Harshada Raut,321654987,B202,Thu Jun 19 14:03:23 2025,0,Returned
 Sneha ,9011926873,C101,Thu Jun 19 14:23:25 2025,0,Returned
 Samiksha,7894561230,B201,19-06-2025,3,Rented
 Samiksha,7894561230,B201,19-06-2025,3,Returned
+Riya,9876543210,C105,2025-06-19,5,Rented
+Riya,9876543210,C105,2025-06-19,1,Returned,20100
+Riya,9876543210,C104,2025-06-19,6,Rented
+Riya,9876543210,C104,2025-06-19,7,Returned,35200
+-
+
+Saru,7418529630,B201,2025-06-19,5,Rented
+Saru,7418529630,B201,,6,Returned, Total: ₹3100, Note: 20% extra/day for late, half-day charge for early return
+Saru,7418529630,B202,2025-06-19,4,Rented
+Saru,7418529630,B202,,2,Returned, Total: ₹3000, Note: 20% extra/day for late, half-day charge for early return
+Vaibhavi,9860950712,B201,2025-06-19,3,Rented
+Vijay,8767723453,C105,2025-06-19,5,Rented
+Vaibhavi,9860950712,B201,,3,Returned, Total: ₹1500, Note: 20% extra/day for late, half-day charge for early return

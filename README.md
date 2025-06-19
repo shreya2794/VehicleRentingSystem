@@ -143,6 +143,38 @@ This is a console-based C++ project that simulates a simple vehicle rental syste
 - Constructor overloading (`Customer` with name + phone)
 - Separation of concerns in file handling and UI
 
+### Progress Day: 7 Focus: Final Bill Generation, Late/Early Return Handling, Bill Logging, UI Enhancements
+ 
+✅ Features Implemented
+1. Final Bill Generation
+- On returning a vehicle, the system:
+- Calculates total rent based on actual days kept
+- Applies late fee (20% of rent/day for each late day)
+- Applies early return penalty (½ day rent)
+- Shows a detailed bill summary in the console
+- Ensures the customer pays full rent for each full day used
+2. Bill Logging
+- Created bill_log.txt to store every bill in a human-readable format.
+3. Logic Used
+- Late Return:
+- If actualDays > expectedDays
+- Late Fee = lateDays * (20% of rentPerDay)
+- Early Return:
+- If actualDays < expectedDays
+- Penalty = ½ * rentPerDay
+4. Enhancements
+- Added generateFinalBill() function for clean and reusable bill printing
+- Added logBill() function to write every bill to bill_log.txt
+- Improved code modularity, error handling, and file updates
+- User-friendly bill format with color-coded highlights and notes
+- Removed rental return date from rental_history.txt to avoid confusion
+5. Files Affected
+- main.cpp	Added generateFinalBill() logic inside case 3
+- bill_log.txt	New file storing all customer bills
+- rental_history.txt	Updated with clearer entries (no real-time time confusion)
+- current_rentals.txt	Used for return validation
+- FileManager class	No change yet (optionally can be used to handle billing too)
+
 #### 📝 License
 This project is licensed under the [MIT License](LICENSE)
 

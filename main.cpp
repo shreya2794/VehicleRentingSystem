@@ -5,7 +5,8 @@
 #include <sstream>
 #include <ctime> // for time functions
 #include <cstring> // for strlen
-
+#include <algorithm>  //  for all_of
+#include <cctype>     //  for isdigit
 
 using namespace std;
 
@@ -240,34 +241,48 @@ public:
 
 //DAY 6
 // Rental History
-void logRentalHistory(const string& customerName, const string& phone, const string& vehicleID, int days, const string& action, int extraDays = 0) {
+void logRentalHistory(const string& customerName, const string& phone, const string& vehicleID, int days, const string& action, int totalBill = 0, int lateFee = 0, int earlyPenalty = 0) {
     ofstream logFile("rental_history.txt", ios::app); // append mode
     if (!logFile) {
         cerr << "Error opening rental history file.\n";
         return;
     }
 
-    // Get current date (no time)
-    time_t now = time(0);
-    tm* ltm = localtime(&now);
-    char dateStr[20];
-    strftime(dateStr, sizeof(dateStr), "%d-%m-%Y", ltm);  // e.g., "18-06-2025"
-
-    // Format: Name, Phone, VehicleID, Date, Days, Action
-    logFile << customerName << "," << phone << "," << vehicleID << "," << dateStr << "," << days;
-
-    // If returning late, include note
-    if (action == "Returned" && extraDays > 0) {
-        logFile << " (+" << extraDays << " late)";
+    string dateStr = "";
+    if (action != "Returned") {
+        // Only log date for Rented actions
+        time_t now = time(0);
+        tm* localtm = localtime(&now);
+        char buffer[11];
+        strftime(buffer, sizeof(buffer), "%Y-%m-%d", localtm); // YYYY-MM-DD
+        dateStr = buffer;
     }
 
-    logFile << "," << action << "\n";
+    logFile << customerName << "," << phone << "," << vehicleID << ",";
+    
+    if (!dateStr.empty()) logFile << dateStr;
+    logFile << "," << days << "," << action;
+
+    if (action == "Returned") {
+        logFile << ", Total: ₹" << totalBill;
+        if (lateFee > 0)
+            logFile << ", Late Fee: ₹" << lateFee;
+        if (earlyPenalty > 0)
+            logFile << ", Early Penalty: ₹" << earlyPenalty;
+        logFile << ", Note: 20% extra/day for late, half-day charge for early return";
+    }
+
+    logFile << "\n";
     logFile.close();
 }
 
 
 //DAY 7
 // Add a function to load existing rental info:
+bool isNumber(const string& s) {
+    return !s.empty() && all_of(s.begin(), s.end(), ::isdigit);
+}
+
 bool loadCurrentRental(Customer& cust) {
     ifstream file("current_rentals.txt");
     if (!file) return false;
@@ -283,6 +298,11 @@ bool loadCurrentRental(Customer& cust) {
         getline(ss, daysStr);
 
         if (name == cust.getName() && phone == cust.getPhone()) {
+            if (!isNumber(daysStr)) {
+                cout << "⚠️ Invalid rental day data for customer: " << name << "\n";
+                return false;
+            }
+
             int days = stoi(daysStr);
             cust.rentVehicle(vid, days);
             return true;
@@ -290,6 +310,7 @@ bool loadCurrentRental(Customer& cust) {
     }
     return false;
 }
+
 
 //day6
 // automatically update vehicle availability at program startup by reading from current_rentals.txt.
@@ -355,6 +376,73 @@ bool isUniqueID(const vector<Vehicle*>& vehicles, const string& id) {
     }
     return true;
 }
+
+//day 7
+
+string formatBill(const string& customerName, const string& phone, const string& vehicleID,
+                  int expectedDays, int actualDays, float rentPerDay,
+                  int baseRent, int lateFee, int earlyPenalty, int totalBill) {
+    
+    stringstream ss;
+    ss << "\n--- Final Bill ---\n";
+    ss << "Customer: " << customerName << " | Phone: " << phone << "\n";
+    ss << "Vehicle ID: " << vehicleID << "\n";
+    ss << "Days Kept: " << actualDays << " (Expected: " << expectedDays << ")\n";
+    ss << "Rent per Day: ₹" << rentPerDay << "\n";
+    ss << "Base Rent: ₹" << baseRent << "\n";
+    
+    if (lateFee > 0)
+        ss << "Late Fee (20% per late day): ₹" << lateFee << "\n";
+    if (earlyPenalty > 0)
+        ss << "Early Return Penalty (Half Day Rent): ₹" << earlyPenalty << "\n";
+
+    ss << "Total Bill: ₹" << totalBill << "\n";
+    ss << "\nNote:\n• Late returns incur 20% extra rent/day.\n• Early returns charge half-day rent as penalty.\n";
+
+    return ss.str();
+}
+
+void logBill(const string& formattedBill) {
+    ofstream billFile("bill_log.txt", ios::app);
+    if (!billFile) {
+        cerr << "Error opening bill_log.txt\n";
+        return;
+    }
+    billFile << formattedBill << "\n------------------------------------\n";
+    billFile.close();
+}
+
+
+
+// generate bill for case 3 in customer menu
+void generateFinalBill(Customer& cust, Vehicle* v, int actualDays) {
+    int expectedDays = cust.getRentDays();
+    int lateDays = max(0, actualDays - expectedDays);
+    float rentPerDay = v->getRentPerDay();
+    int baseRent = v->calculateRent(actualDays);
+    int lateFee = lateDays > 0 ? static_cast<int>(lateDays * rentPerDay * 0.2) : 0;
+    int earlyPenalty = (actualDays < expectedDays) ? static_cast<int>(rentPerDay / 2) : 0;
+    int totalBill = baseRent + lateFee + earlyPenalty;
+
+    // ✅ Use the shared formatting function
+    string billText = formatBill(cust.getName(), cust.getPhone(), v->getID(),
+                                 expectedDays, actualDays, rentPerDay,
+                                 baseRent, lateFee, earlyPenalty, totalBill);
+
+    // Display to user
+    cout << "\033[1;33m" << billText << "\033[0m\n";
+
+    // Log summary
+    logRentalHistory(cust.getName(), cust.getPhone(), v->getID(), actualDays, "Returned", totalBill);
+
+    // ✅ Log full bill
+    logBill(billText);
+
+    removeFromCurrentRentals(cust.getName(), cust.getPhone());
+    cust.returnVehicle();
+}
+
+
 
 
 // ADMIN MENU
@@ -526,9 +614,11 @@ void customerMenu(vector<Vehicle*>& vehicles) {
 
             case 2: {
                 if (cust.hasRented()) {
-                    cout << "Already rented vehicle: " << cust.getRentedVehicleID() << endl;
-                    break;
+                    cout << "⚠️ You already rented vehicle ID: " << cust.getRentedVehicleID() << endl;
+                    cout << "Please return the current vehicle before renting another.\n";
+                    break;  // Make sure this exists to prevent infinite input
                 }
+
 
                 string rentID;
                 int days;
@@ -558,29 +648,31 @@ void customerMenu(vector<Vehicle*>& vehicles) {
 
                 break;
             }
-
-            case 3: {
+            
+             case 3: {
                 if (!cust.hasRented()) {
-                    cout << "No rented vehicle to return.\n";
-                    break;
+                cout << "No rented vehicle to return.\n";
+                break;
                 }
 
                 string rentedID = cust.getRentedVehicleID();
-                int rentedDays = cust.getRentDays();  // Use this for logging
+                int actualDays;
+                cout << "Enter number of days you kept the vehicle: ";
+                cin >> actualDays;
 
                 for (auto& v : vehicles) {
-                    if (v->getID() == rentedID) {
-                        v->setAvailability(true);
-                        cout << "Vehicle returned.\n";
-                        FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
-                        logRentalHistory(cust.getName(), cust.getPhone(), rentedID, rentedDays, "Returned");
-                        break;
-                    }
-                }
-                cust.returnVehicle();// Remove from currnt_rentals.txt
-                removeFromCurrentRentals(cust.getName(), cust.getPhone());
+                if (v->getID() == rentedID) {
+                v->setAvailability(true);  // Make available first
+                generateFinalBill(cust, v, actualDays); // 🟡 Use the function here
+            
+                // Save updated vehicle state
+                FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
                 break;
-            }
+                }
+                }
+                break;
+                }
+  
 
             case 0:
                 cout << "Exiting Customer Menu.\n";
