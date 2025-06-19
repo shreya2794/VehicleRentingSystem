@@ -240,23 +240,58 @@ public:
 
 //DAY 6
 // Rental History
-void logRentalHistory(const string& customerName, const string& phone, const string& vehicleID, int days, const string& action) {
+void logRentalHistory(const string& customerName, const string& phone, const string& vehicleID, int days, const string& action, int extraDays = 0) {
     ofstream logFile("rental_history.txt", ios::app); // append mode
     if (!logFile) {
         cerr << "Error opening rental history file.\n";
         return;
     }
 
-    // Get current date and time
+    // Get current date (no time)
     time_t now = time(0);
-    char* dt = ctime(&now); // formatted string with \n
-    dt[strlen(dt) - 1] = '\0'; // remove the newline character
+    tm* ltm = localtime(&now);
+    char dateStr[20];
+    strftime(dateStr, sizeof(dateStr), "%d-%m-%Y", ltm);  // e.g., "18-06-2025"
 
-    // Log format: Customer, Vehicle ID, DateTime, Days, Action
-    logFile << customerName << ","  << phone << "," << vehicleID << "," << dt << "," << days << "," << action << "\n";
+    // Format: Name, Phone, VehicleID, Date, Days, Action
+    logFile << customerName << "," << phone << "," << vehicleID << "," << dateStr << "," << days;
+
+    // If returning late, include note
+    if (action == "Returned" && extraDays > 0) {
+        logFile << " (+" << extraDays << " late)";
+    }
+
+    logFile << "," << action << "\n";
     logFile.close();
 }
 
+
+//DAY 7
+// Add a function to load existing rental info:
+bool loadCurrentRental(Customer& cust) {
+    ifstream file("current_rentals.txt");
+    if (!file) return false;
+
+    string line;
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string name, phone, vid, daysStr;
+
+        getline(ss, name, ',');
+        getline(ss, phone, ',');
+        getline(ss, vid, ',');
+        getline(ss, daysStr);
+
+        if (name == cust.getName() && phone == cust.getPhone()) {
+            int days = stoi(daysStr);
+            cust.rentVehicle(vid, days);
+            return true;
+        }
+    }
+    return false;
+}
+
+//day6
 // automatically update vehicle availability at program startup by reading from current_rentals.txt.
 void updateVehicleAvailabilityFromCurrentRentals(vector<Vehicle*>& vehicles) {
     ifstream in("current_rentals.txt");
@@ -457,6 +492,7 @@ void customerMenu(vector<Vehicle*>& vehicles) {
     getline(cin, phone);
     
     Customer cust(customerName, phone); //Pass phone and name to constructor
+    loadCurrentRental(cust);  // ✅ Loads from file if exists
 
     int choice;
     do {
@@ -530,12 +566,14 @@ void customerMenu(vector<Vehicle*>& vehicles) {
                 }
 
                 string rentedID = cust.getRentedVehicleID();
+                int rentedDays = cust.getRentDays();  // Use this for logging
+
                 for (auto& v : vehicles) {
                     if (v->getID() == rentedID) {
                         v->setAvailability(true);
                         cout << "Vehicle returned.\n";
                         FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
-                        logRentalHistory(cust.getName(), cust.getPhone(), rentedID, 0, "Returned");
+                        logRentalHistory(cust.getName(), cust.getPhone(), rentedID, rentedDays, "Returned");
                         break;
                     }
                 }
