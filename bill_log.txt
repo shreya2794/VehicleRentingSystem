@@ -42,3 +42,32 @@ Note:
 • Early returns charge half-day rent as penalty.
 
 ------------------------------------
+
+--- Final Bill ---
+Customer       : Vijay | Phone: 8767723453
+Vehicle ID     : C105
+Days Kept      : 6 (Expected: 5)
+Rent per Day   : ₹20000
+Base Rent      : ₹120100
+Late Fee       : ₹20000 (₹20000 x 1 days)
+Total Bill     : ₹140100
+
+Note:
+• Late returns incur full rent/day.
+• Early returns charge half-day rent penalty.
+
+------------------------------------
+
+--- Final Bill ---
+Customer       : Vijay | Phone: 8767723453
+Vehicle ID     : B202
+Days Kept      : 4 (Expected: 4)
+Rent per Day   : ₹1200
+Base Rent      : ₹4800
+Total Bill     : ₹4800
+
+Note:
+• Late returns incur full rent/day.
+• Early returns charge half-day rent penalty.
+
+------------------------------------
