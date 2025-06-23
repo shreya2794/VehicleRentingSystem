@@ -36,7 +36,7 @@ public:
     string getID() const { return vehicleID; }
     string getBrand() const { return brand; }
     bool getAvailability() const { return isAvailable; }
-    float getRentPerDay() const { return rentPerDay; }// Added on Day 3: Getter for rent per day
+    float getRentPerDay() const { return rentPerDay; }// Getter for rent per day
 
     // Setters
     void setAvailability(bool avail) { isAvailable = avail; }
@@ -99,13 +99,12 @@ public:
         return rentPerDay * days;
     }
 
-    //day 3
     bool hasCarrierFn() const { return hasCarrier; } // getters keep attributes encapsulated.
 
 };
 
 
-// Customer class (day 5)
+// Customer class
 class Customer{
     string name;
     string phoneNumber; //If you store this in an int or long, the leading 0 is lost. // Phone Numbers Are Not Used for Calculations9They're identifiers, not numeric values.) //Country codes, dashes, brackets, or spaces: //An int can’t hold such large numbers:                     
@@ -197,9 +196,9 @@ public:
 
 };
 
-// FileManager Class (day 4)
-// Using static methods makes sense here since file operations don’t depend on object state.
-//  use of dynamic_cast to identify actual types (Car, Bike) before saving them — necessary for correct serialization.
+// FileManager Class 
+// Using static methods since file operations don’t depend on object state.
+// use of dynamic_cast to identify actual types (Car, Bike) before saving them — necessary for correct serialization.
 class FileManager {
 public:
     static void saveVehiclesToFile(const vector<Vehicle*>& vehicles, const string& filename) {
@@ -644,7 +643,6 @@ private:
     }
 };
 
-//DAY 5 CUSTOMER MENU
 // Customer Menu
 class CustomerInterface{
     public:
@@ -657,7 +655,7 @@ class CustomerInterface{
     getline(cin, phone);
     
     Customer cust(customerName, phone); //Pass phone and name to constructor
-    RentalManager::loadCurrentRental(cust);  // ✅ Loads from file if exists
+    RentalManager::loadCurrentRental(cust);  //  Loads from file if exists
 
     int choice;
     do {
@@ -695,7 +693,7 @@ private:
 
     static void rentVehicle(Customer& cust, vector<Vehicle*>& vehicles){
                 if (cust.hasRented()) {
-                    cout << "⚠️ You already rented vehicle ID: " << cust.getRentedVehicleID() << endl;
+                    cout << " You already rented vehicle ID: " << cust.getRentedVehicleID() << endl;
                     cout << "Please return the current vehicle before renting another.\n";
                     return;  // Make sure this exists to prevent infinite input
                 }
@@ -790,6 +788,8 @@ int main() {
             break;
     }
 }
+    // Save to file
+    FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
 
     //DAY 4
     //adminMenu(vehicles);
@@ -808,9 +808,6 @@ int main() {
     //     cout << "Rent for 3 days: " << v->calculateRent(3) << "\n\n";
     // }
 
-    // Save to file
-    FileManager::saveVehiclesToFile(vehicles, "vehicles.txt");
-
     //Day 6 cleared and added in case 0
     // // Clean up
     // for (auto v : vehicles)
@@ -818,10 +815,3 @@ int main() {
 
     return 0;
 }
-
-// Inheritance - Car and Bike inherit from Vehicle
-// Polymorphism	- Base class pointer (Vehicle*) calls derived class methods (Car, Bike)
-// Virtual Functions - displayDetails() and calculateRent() behave polymorphically
-// Dynamic Allocation - Objects are created using new
-// Vectors & Pointers - vector<Vehicle*> holds heterogeneous vehicle objects
-// Memory Management - delete used to prevent memory leaks

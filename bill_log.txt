@@ -1,15 +1,48 @@
 
 --- Final Bill ---
-Customer       : Shreya  | Phone: 8767723453
-Vehicle ID     : B201
-Days Kept      : 5 (Expected: 6)
-Rent per Day   : ₹500
-Base Rent      : ₹2500
-Early Penalty  : ₹250 (Half-day rent)
-Total Bill     : ₹2750
+Customer       : Shreya Dandale | Phone: 8767723453
+Vehicle ID     : C101
+Days Kept      : 4 (Expected: 6)
+Rent per Day   : ₹20000
+Base Rent      : ₹80100
+Early Penalty  : ₹10000 (Half-day rent)
+Total Bill     : ₹90100
 
 Note:
 • Late returns incur 100% rent/day.
 • Early returns charge 50% penalty of daily rent.
+• For Cars extra amount of 100 is added as booking fee.
+
+------------------------------------
+
+--- Final Bill ---
+Customer       : Sandip Dandale | Phone: 9011926873
+Vehicle ID     : B201
+Days Kept      : 5 (Expected: 3)
+Rent per Day   : ₹500
+Base Rent      : ₹2500
+Late Fee       : ₹1000 (₹500 x 2 days)
+Total Bill     : ₹3500
+
+Note:
+• Late returns incur 100% rent/day.
+• Early returns charge 50% penalty of daily rent.
+• For Cars extra amount of 100 is added as booking fee.
+
+------------------------------------
+
+--- Final Bill ---
+Customer       : Vidya Dandale | Phone: 9860950712
+Vehicle ID     : C101
+Days Kept      : 7 (Expected: 10)
+Rent per Day   : ₹20000
+Base Rent      : ₹140100
+Early Penalty  : ₹10000 (Half-day rent)
+Total Bill     : ₹150100
+
+Note:
+• Late returns incur 100% rent/day.
+• Early returns charge 50% penalty of daily rent.
+• For Cars extra amount of 100 is added as booking fee.
 
 ------------------------------------
