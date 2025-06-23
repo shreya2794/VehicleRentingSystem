@@ -136,10 +136,5 @@ B.Tech in Electronics & Telecommunication, JSPM RSCOE Pune (2026)
 
 ---
 
-## 📜 License
-
-This project is open-source and available under the [MIT License](LICENSE).
-
----
 
 
