@@ -1,73 +1,15 @@
 
 --- Final Bill ---
-Customer: Saru | Phone: 7418529630
-Vehicle ID: B201
-Days Kept: 6 (Expected: 5)
-Rent per Day: ₹500
-Base Rent: ₹3000
-Late Fee (20% per late day): ₹100
-Total Bill: ₹3100
+Customer       : Shreya  | Phone: 8767723453
+Vehicle ID     : B201
+Days Kept      : 5 (Expected: 6)
+Rent per Day   : ₹500
+Base Rent      : ₹2500
+Early Penalty  : ₹250 (Half-day rent)
+Total Bill     : ₹2750
 
 Note:
-• Late returns incur 20% extra rent/day.
-• Early returns charge half-day rent as penalty.
-
-------------------------------------
-
---- Final Bill ---
-Customer: Saru | Phone: 7418529630
-Vehicle ID: B202
-Days Kept: 2 (Expected: 4)
-Rent per Day: ₹1200
-Base Rent: ₹2400
-Early Return Penalty (Half Day Rent): ₹600
-Total Bill: ₹3000
-
-Note:
-• Late returns incur 20% extra rent/day.
-• Early returns charge half-day rent as penalty.
-
-------------------------------------
-
---- Final Bill ---
-Customer: Vaibhavi | Phone: 9860950712
-Vehicle ID: B201
-Days Kept: 3 (Expected: 3)
-Rent per Day: ₹500
-Base Rent: ₹1500
-Total Bill: ₹1500
-
-Note:
-• Late returns incur 20% extra rent/day.
-• Early returns charge half-day rent as penalty.
-
-------------------------------------
-
---- Final Bill ---
-Customer       : Vijay | Phone: 8767723453
-Vehicle ID     : C105
-Days Kept      : 6 (Expected: 5)
-Rent per Day   : ₹20000
-Base Rent      : ₹120100
-Late Fee       : ₹20000 (₹20000 x 1 days)
-Total Bill     : ₹140100
-
-Note:
-• Late returns incur full rent/day.
-• Early returns charge half-day rent penalty.
-
-------------------------------------
-
---- Final Bill ---
-Customer       : Vijay | Phone: 8767723453
-Vehicle ID     : B202
-Days Kept      : 4 (Expected: 4)
-Rent per Day   : ₹1200
-Base Rent      : ₹4800
-Total Bill     : ₹4800
-
-Note:
-• Late returns incur full rent/day.
-• Early returns charge half-day rent penalty.
+• Late returns incur 100% rent/day.
+• Early returns charge 50% penalty of daily rent.
 
 ------------------------------------

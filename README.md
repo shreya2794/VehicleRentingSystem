@@ -3,178 +3,148 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/shreya2794/VehicleRentingSystem)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
-## Vehicle Rental System (C++ | OOP)
+# 🚗 Vehicle Rental System (C++ Project)
 
-This is a console-based C++ project that simulates a simple vehicle rental system using Object-Oriented Programming concepts. The system allows managing different types of vehicles with essential details like brand, model, registration number, rent, and availability.
+A modular and object-oriented **Vehicle Rental System** built in C++. It allows customers to rent or return vehicles (cars/bikes), and admins to manage fleet inventory and view rental history. The system uses OOP concepts like inheritance, polymorphism, encapsulation, abstraction, and file handling for persistent data.
 
-### Day 1: Project Setup & Base Vehicle Class
+---
 
-#### ✅ What’s Implemented:
-- Project initialized with Git
-- Base class `Vehicle` created with:
-  - Attributes: brand, model, registration number, rent per day, availability
-  - Constructor (parameterized)
-  - Display method
-  - Getters and setters
-- Code tested in Visual Studio Code
-- Files added:
-  - `main.cpp`
-  - `.vscode/` configuration files
+## 🧠 OOP Principles Used
 
-#### OOP Concepts Used:
-- **Encapsulation** (private data members with public methods)
-- **Constructor Overloading**
-- **Getters and Setters**
+- **Encapsulation** - All classes keep their data private and expose behavior through public methods (`getID()`, `rentVehicle()`, etc.) 
+- **Abstraction** - Users interact with simple admin/customer menus without knowing internal logic; file I/O, billing, and rental logic are abstracted into dedicated classes 
+- **Inheritance** - `Car` and `Bike` inherit from base class `Vehicle` 
+- **Polymorphism** - Vehicle objects are accessed via base class pointers; virtual functions enable runtime behavior (`calculateRent()`, `displayDetails()`) 
+- **Classes & Objects** - Real-world entities like Vehicle, Customer, Billing, and FileManager are modeled as classes 
 
-### Day 2 : Progress: Inheritance, Polymorphism & Virtual Functions, MIT License and badge
+---
 
-#### ✅ Features Added
-- Created base class `Vehicle` with:
-  - Protected attributes: `vehicleID`, `brand`, `rentPerDay`, `isAvailable`
-  - Virtual functions: `displayDetails()` and `calculateRent(int days)`
-  - Constructor overloading and virtual destructor
-- Implemented two derived classes:
-  - `Car` (with additional attribute: `numSeats`)
-  - `Bike` (with additional attribute: `hasCarrier`)
-- Used **polymorphism** to dynamically call overridden methods through `Vehicle*` pointers
-- Managed objects using `vector<Vehicle*>` and cleaned memory with `delete`
-- Files Modified
- - `main.cpp`: All class definitions and logic implemented here
- - `.vscode/`: VS Code configuration files (auto-generated)
+## 🧩 Key Features
 
-#### Concepts Used
-- **Inheritance**: `Car` and `Bike` classes inherit from `Vehicle`
-- **Polymorphism**: Runtime method dispatch using virtual functions
-- **Dynamic Memory Allocation**: Created objects using `new`
-- **Virtual Destructor**: Ensures proper cleanup of derived objects
-- **Encapsulation**: Controlled access to class members using getters/setters
-- **Initialization List**: Used in constructors for clean attribute initialization
-- **Forward Declaration**: Introduced for planning future expansion (e.g., `Customer` class)
+### 👤 Customer
+- View available vehicles
+- Rent vehicle (with unique ID and duration)
+- Return rented vehicle and get a final bill
+- Early return → half-day penalty
+- Late return → extra full-day charges
+- Rental automatically saved in `current_rentals.txt`
+- System Reset Function → Admins can reset all system data (vehicles, rentals, bills, logs) to start fresh for testing or new deployment.
 
-### Day 3: File Handling & Data Persistence
+### 👩‍💼 Admin
+- Add new cars or bikes with unique IDs
+- View all registered vehicles with status
+- View complete rental history from `rental_history.txt`
 
-#### ✅ What Was Added
-- **FileManager class** to manage all file-related operations (save/load).
-- Vehicle data is now stored in `vehicles.txt` to retain entries across runs.
-- Used `dynamic_cast` to detect the correct derived type (Car/Bike) when saving/loading.
-- Files added
- - `vehicles.txt`
+---
 
-#### OOP Concepts Used
-- **Inheritance**: `Car` and `Bike` inherit from `Vehicle`
-- **Polymorphism**: `displayDetails()` and `calculateRent()` overridden
-- **Encapsulation**: Getter/setter methods manage access
-- **Separation of Concerns**: FileManager handles file logic separately
-- **Dynamic Casting**: Used for identifying object type when saving to file
-- **Abstraction**: File I/O logic hidden inside `FileManager`
+## 🔁 Project Flow Summary
 
-### Day 4: Admin Module – Add/View Vehicles
+1. Admin loads vehicle data
+2. Vehicles are saved to and read from `vehicles.txt`
+3. Customers rent/return vehicles → triggers:
+   - Update availability
+   - Log rental to `rental_history.txt`
+   - Track active rentals in `current_rentals.txt`
+   - Generate final bill in `bill_log.txt`
 
-#### ✅ Features Implemented:
-1. **Admin Menu (Switch-Case Based):**
-   - Option to **Add** or **View** all vehicles.
-   - Easy-to-navigate menu-driven interface.
-2. **Add Vehicle:**
-   - User must input a unique ID starting with `C` (for Car) or `B` (for Bike).
-   - Rejects duplicate or invalid IDs.
-   - Stores vehicle brand, rent per day, number of seats (Car), or carrier info (Bike).
-3. **View Vehicles:**
-   - Displays **all cars** first followed by **all bikes**.
-   - Each vehicle shown in a **single line** with relevant information.
-4. **FileManager Integration:**
-   - `vehicles.txt` used to store and retrieve vehicle records.
-   - Fully supports persistent data storage using `saveVehiclesToFile()` and `loadVehiclesFromFile()`.
-5. **Files Modified:**
-  - `main.cpp` (Admin module, vehicle input/output)
-  - `FileManager` class (load/save enhancements)
+---
 
-#### OOP Concepts Applied:
-- **Abstraction:** Admin functionality is abstracted inside `adminMenu()` function.
-- **Inheritance:** `Car` and `Bike` inherit from base class `Vehicle`.
-- **Polymorphism:** Display and rent calculation methods are overridden in child classes.
-- **Separation of Concerns:** File handling separated via the `FileManager` class.
+## 📁 File Handling
 
-### Day 5: Customer Module: View/Search/Rent/Return Vehicles
+- `vehicles.txt` - Stores all registered vehicles with brand, rent/day, availability 
+- `current_rentals.txt` - Tracks active customer rentals (used to auto-update availability) 
+- `rental_history.txt` - Logs every rent/return with date, bill, fees, and penalties 
+- `bill_log.txt` - Stores formatted customer bills (printout-style) 
 
-#### ✅ Features Implemented:
-- Created `Customer` class to manage individual customer actions
-- Customer functionality added:
-  - View all vehicles with **availability status**
-  - Rent a vehicle by ID
-  - Return a rented vehicle
-- Vehicle availability updates saved to `vehicles.txt`
-- Files Modified:
-  - `main.cpp` (all logic)
-  - `vehicles.txt` (auto-updated for availability) 
+---
 
-#### OOP Concepts Applied:
-- Inheritance (`Car` and `Bike` inherit from `Vehicle`)
-- Polymorphism (`displayDetails()` and `calculateRent()` are overridden)
-- Encapsulation (used in `Customer` and `Vehicle` classes)
-- Dynamic memory allocation (`new` and `delete`)
+## 📦 Class Structure Overview
 
-### Day 6 Rental History
+- `Vehicle` (Base class)
+  - `Car` (Seats info)
+  - `Bike` (Carrier info)
+- `Customer` (Tracks user info, rental status)
+- `AdminInterface` / `CustomerInterface` (User menus)
+- `RentalManager` (Handles rental file operations)
+- `FileManager` (Load/save vehicles from/to file)
+- `Billing` (Calculate final bill and log charges)
 
-#### ✅ Features Implemented:
+---
 
-1. Customer Enhancements:
-- Added phone number field to `Customer` class.
-- Captured both **name** and **phone number** when a customer logs in.
-- Used `getline()` for proper input of full names and phone numbers.
-2. Rental Tracking Improvements:
-- Rental entries now include **customer name, phone number, vehicle ID, date, days, action**.
-- On return, the system reads `current_rentals.txt` to check if the customer has a pending rental.
-- Vehicle availability is updated based on file tracking.
-3. Menu Flow Enhancements:
-- Main login menu loops until valid input (Admin/Customer/Exit).
-- After Admin or Customer menu exits, control returns to login menu.
-- Handled invalid input using `cin.clear()` and `cin.ignore()`.
-4. Files Modified:
-- `main.cpp`
-- `Customer.h / Customer.cpp`
-- `FileManager.h / FileManager.cpp`
-- `rental_history.txt` (updated format)
-- `vehicles.txt` (availability flags updated)
-- `current_rentals.txt`(added new)
+## 🧾 Billing Logic
 
-#### OOP Concepts Applied:
-- Class encapsulation (`Customer`, `Vehicle`, `Car`, `Bike`, `FileManager`)
-- Polymorphism using `Vehicle*` with `dynamic_cast`
-- Constructor overloading (`Customer` with name + phone)
-- Separation of concerns in file handling and UI
+- **Base Rent** = rent per day × total days used
+- **Late Fee** = ₹rent/day × number of extra days
+- **Early Return Penalty** = ₹rent/day ÷ 2 (half-day charge)
+- 💾 All bills saved to `bill_log.txt`
 
-### Progress Day: 7 Focus: Final Bill Generation, Late/Early Return Handling, Bill Logging, UI Enhancements
- 
-✅ Features Implemented
-1. Final Bill Generation
-- On returning a vehicle, the system:
-- Calculates total rent based on actual days kept
-- Applies late fee (20% of rent/day for each late day)
-- Applies early return penalty (½ day rent)
-- Shows a detailed bill summary in the console
-- Ensures the customer pays full rent for each full day used
-2. Bill Logging
-- Created bill_log.txt to store every bill in a human-readable format.
-3. Logic Used
-- Late Return:
-- If actualDays > expectedDays
-- Late Fee = lateDays * (20% of rentPerDay)
-- Early Return:
-- If actualDays < expectedDays
-- Penalty = ½ * rentPerDay
-4. Enhancements
-- Added generateFinalBill() function for clean and reusable bill printing
-- Added logBill() function to write every bill to bill_log.txt
-- Improved code modularity, error handling, and file updates
-- User-friendly bill format with color-coded highlights and notes
-- Removed rental return date from rental_history.txt to avoid confusion
-5. Files Affected
-- main.cpp	Added generateFinalBill() logic inside case 3
-- bill_log.txt	New file storing all customer bills
-- rental_history.txt	Updated with clearer entries (no real-time time confusion)
-- current_rentals.txt	Used for return validation
-- FileManager class	No change yet (optionally can be used to handle billing too)
+---
 
-#### 📝 License
-This project is licensed under the [MIT License](LICENSE)
+## 🧪 Final Testing Checklist ✅
+
+- [x] Admin can add cars and bikes with validation
+- [x] Duplicated vehicle IDs are rejected
+- [x] Customer can rent only if not already renting
+- [x] Vehicle availability updates automatically
+- [x] Final bill generated with accurate fees
+- [x] Rental and return logs are persistent
+- [x] Invalid inputs are safely handled
+- [x] No memory leaks (manual `delete` on exit)
+
+---
+
+## 🛠 Technologies Used
+
+- Language: **C++**
+- Features: **Object-Oriented Programming, File I/O, CLI**
+- IDE: VS Code / Code::Blocks / Terminal
+- Platform: Windows / Linux
+
+---
+
+## ▶️ How to Run
+
+1. Clone or download the project
+2. Open terminal or command prompt
+3. Compile using:
+   ```bash
+   g++ main.cpp -o rental
+   ./rental
+   ```
+4. Follow on-screen menus for Admin or Customer
+
+💡 **Note for Windows Users:**
+If you're on Windows, after compiling with:
+
+```bash
+g++ main.cpp -o rental
+```
+
+Run the program using:
+```bash
+rental
+```
+or
+```bash
+rental.exe
+```
+(You do not need `./` like on Linux/macOS.)
+
+---
+
+## 👩‍💻 Developer
+
+**Shreya Dandale**  
+B.Tech in Electronics & Telecommunication, JSPM RSCOE Pune (2026)  
+🎯 Passionate about C++, Web Development, and Software Engineering  
+🌐 [GitHub](https://github.com/) • [LinkedIn](https://linkedin.com/) *(Add your links here)*
+
+---
+
+## 📜 License
+
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
+
 

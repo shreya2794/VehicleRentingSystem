@@ -264,10 +264,23 @@ public:
         inFile.close();
     }
 
-    // needed during resets
-    static void clearVehiclesFile(const string& filename) {
-    ofstream outFile(filename, ios::trunc);  // Clears content
-    outFile.close();
+    // Reset function
+    static void resetSystemData() {
+        vector<string> files = {
+            "vehicles.txt",
+            "current_rentals.txt",
+            "rental_history.txt",
+            "bill_log.txt"
+        };
+
+        for (const auto& file : files) {
+            ofstream out(file);  // Open in truncate mode (default)
+            if (out) {
+                cout << "Cleared: " << file << endl;
+            } else {
+                cerr << "Failed to clear: " << file << endl;
+            }
+        }
     }
 
 };
@@ -458,6 +471,7 @@ private:
         ss << "Total Bill     : ₹" << totalBill << "\n";
         ss << "\nNote:\n• Late returns incur " << (LATE_FEE_RATE * 100) << "% rent/day.\n";
         ss << "• Early returns charge " << (EARLY_PENALTY_RATE * 100) << "% penalty of daily rent.\n";
+        ss << "• For Cars extra amount of 100 is added as booking fee.\n";
         return ss.str();
     }
 
@@ -472,6 +486,29 @@ private:
     }
 };
 
+// Display Function for Availability of Vehicles
+// Shared display function
+void displayAllVehicles(const vector<Vehicle*>& vehicles) {
+    cout << "\n======================== Cars ========================\n";
+    for (const auto& v : vehicles) {
+        if (Car* car = dynamic_cast<Car*>(v)) {
+            cout << car->getID() << " | " << car->getBrand()
+                 << " | ₹" << car->getRentPerDay()
+                 << " | Seats: " << car->getSeats()
+                 << " | " << (car->getAvailability() ? "✅ Available" : "❌ Rented") << endl;
+        }
+    }
+    cout << "\n======================== Bikes =======================\n";
+    for (const auto& v : vehicles) {
+        if (Bike* bike = dynamic_cast<Bike*>(v)) {
+            cout << bike->getID() << " | " << bike->getBrand()
+                 << " | ₹" << bike->getRentPerDay()
+                 << " | Carrier: " << (bike->hasCarrierFn() ? "Yes" : "No")
+                 << " | " << (bike->getAvailability() ? "✅ Available" : "❌ Rented") << endl;
+        }
+    }
+}
+
 
 // ADMIN MENU
 class AdminInterface{
@@ -481,7 +518,7 @@ class AdminInterface{
     int choice;
     do {
         cout << "\n--- Admin Menu ---\n";
-        cout << "1. Add Vehicle\n2. View All Vehicles\n3. View Rental History\n0. Exit\nEnter choice: ";
+        cout << "1. Add Vehicle\n2. View All Vehicles\n3. View Rental History\n4. Reset System (Clear All Data)\n0. Exit\nEnter choice: ";
         cin >> choice;
 
         switch (choice) {
@@ -494,10 +531,12 @@ class AdminInterface{
             case 3: 
                 viewRentalHistory();
                 break;
+            case 4:
+                handleSystemReset(vehicles);
+                break;
             case 0:
                 cout << "Exiting Admin Menu.\n";
-                break;
-                
+                break;     
             default:
                 cout << " Invalid choice. Please try again.\n";
                 cin.clear(); // clear error flag // clears the error state if a non-numeric input was entered.
@@ -522,7 +561,7 @@ private:
 
                     // Validate prefix
                     if ((typeChoice == 1 && id[0] != 'C') || (typeChoice == 2 && id[0] != 'B')) {
-                        cout << " Invalid ID prefix. Car ID must start with 'C', Bike with 'B'. Try again.\n";
+                        cout << " Invalid ID prefix. Car ID must start with 'C1', Bike with 'B2'. Try again.\n";
                         continue;
                     }
 
@@ -558,25 +597,7 @@ private:
     }
     
     static void viewVehicles(const vector<Vehicle*>& vehicles) {       
-            cout << "\n Cars:\n";
-                for (const auto& v : vehicles) {
-                    if (Car* car = dynamic_cast<Car*>(v)) {
-                        cout << car->getID() << " | " << car->getBrand()
-                             << " | ₹" << car->getRentPerDay()
-                             << " | " << (car->getAvailability() ? "Available" : "Rented")
-                             << " | Seats: " << car->getSeats() << endl;
-                    }
-                }
-
-                cout << "\n Bikes:\n";
-                for (const auto& v : vehicles) {
-                    if (Bike* bike = dynamic_cast<Bike*>(v)) {
-                        cout << bike->getID() << " | " << bike->getBrand()
-                             << " | ₹" << bike->getRentPerDay()
-                             << " | " << (bike->getAvailability() ? "Available" : "Rented")
-                             << " | Carrier: " << (bike->hasCarrierFn() ? "Yes" : "No") << endl;
-                    }
-                }
+           displayAllVehicles(vehicles); 
     }
 
     static void viewRentalHistory(){
@@ -605,6 +626,21 @@ private:
                 }
 
                 logFile.close();
+    }
+
+    static void handleSystemReset(vector<Vehicle*>& vehicles) {
+            char confirm;
+            cout << "⚠️  Are you sure you want to reset all system data? (y/n): ";
+            cin >> confirm;
+            if (confirm == 'y' || confirm == 'Y') {
+                FileManager::resetSystemData();
+                // Optional: clear vehicles in memory
+                for (auto v : vehicles) delete v;
+                vehicles.clear();
+                cout << "✅ System data reset.\n";
+            } else {
+                cout << "❌ Reset cancelled.\n";
+            }
     }
 };
 
@@ -654,25 +690,7 @@ class CustomerInterface{
 
 private:
     static void viewAvailableVehicles(const vector<Vehicle*>& vehicles){
-                cout << "\n======================== Cars ========================\n";
-                for (const auto& v : vehicles) {
-                    if (Car* car = dynamic_cast<Car*>(v)) {
-                        cout << car->getID() << " | " << car->getBrand()
-                             << " | ₹" << car->getRentPerDay()
-                             << " | Seats: " << car->getSeats() 
-                             << " | " << (car->getAvailability() ? "✅ Available" : "❌ Rented")<< endl;
-                    }
-                }
-                cout << "\n======================== Bikes =======================\n";
-                for (const auto& v : vehicles) {
-                    if (Bike* bike = dynamic_cast<Bike*>(v)) {
-                        cout << bike->getID() << " | " << bike->getBrand()
-                             << " | ₹" << bike->getRentPerDay()
-                             << " | Carrier: " << (bike->hasCarrierFn() ? "Yes" : "No") 
-                             << " | " << (bike->getAvailability() ? "✅ Available" : "❌ Rented")<< endl;
-                             
-                    }
-                }
+                displayAllVehicles(vehicles);
     }
 
     static void rentVehicle(Customer& cust, vector<Vehicle*>& vehicles){
