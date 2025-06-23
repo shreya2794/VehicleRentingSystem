@@ -1,8 +1,3 @@
-![GitHub Repo stars](https://img.shields.io/github/stars/shreya2794/VehicleRentingSystem?style=social)
-![GitHub forks](https://img.shields.io/github/forks/shreya2794/VehicleRentingSystem?style=social)
-![GitHub last commit](https://img.shields.io/github/last-commit/shreya2794/VehicleRentingSystem)
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
-
 # 🚗 Vehicle Rental System (C++ Project)
 
 A modular and object-oriented **Vehicle Rental System** built in C++. It allows customers to rent or return vehicles (cars/bikes), and admins to manage fleet inventory and view rental history. The system uses OOP concepts like inheritance, polymorphism, encapsulation, abstraction, and file handling for persistent data.
@@ -137,7 +132,7 @@ rental.exe
 **Shreya Dandale**  
 B.Tech in Electronics & Telecommunication, JSPM RSCOE Pune (2026)  
 🎯 Passionate about C++, Web Development, and Software Engineering  
-🌐 [GitHub](https://github.com/) • [LinkedIn](https://linkedin.com/) *(Add your links here)*
+🌐 [GitHub](https://github.com/shreya2794) • [LinkedIn](www.linkedin.com/in/shreya-dandale) 
 
 ---
 
