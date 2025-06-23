@@ -1,6 +1,0 @@
-Shreya Dandale,8767723453,C101,2025-06-23,6,Rented
-Shreya Dandale,8767723453,C101,,4,Returned, Total: ₹90100, Note: 20% extra/day for late, half-day charge for early return
-Sandip Dandale,9011926873,B201,2025-06-23,3,Rented
-Sandip Dandale,9011926873,B201,,5,Returned, Total: ₹3500, Note: 20% extra/day for late, half-day charge for early return
-Vidya Dandale,9860950712,C101,2025-06-23,10,Rented
-Vidya Dandale,9860950712,C101,,7,Returned, Total: ₹150100, Note: 20% extra/day for late, half-day charge for early return

@@ -555,7 +555,7 @@ private:
                 float rent;
 
                 while (true) {
-                    cout << "Enter ID (start with 'C' for Car or 'B' for Bike): ";
+                    cout << "Enter ID (start with 'C1' for Car or 'B2' for Bike): ";
                     cin >> id;
 
                     // Validate prefix
