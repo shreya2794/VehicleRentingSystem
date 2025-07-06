@@ -555,12 +555,12 @@ private:
                 float rent;
 
                 while (true) {
-                    cout << "Enter ID (start with 'C1' for Car or 'B2' for Bike): ";
+                    cout << "Enter ID (start with 'C'(CMH271616) for Car or 'B'(BMH142424) for Bike): ";
                     cin >> id;
 
                     // Validate prefix
                     if ((typeChoice == 1 && id[0] != 'C') || (typeChoice == 2 && id[0] != 'B')) {
-                        cout << " Invalid ID prefix. Car ID must start with 'C1', Bike with 'B2'. Try again.\n";
+                        cout << " Invalid ID prefix. Car ID must start with 'C', Bike with 'B'. Try again.\n";
                         continue;
                     }
 
