@@ -415,7 +415,7 @@ private:
 };
 
 // --- Billing configuration constants ---
-const float LATE_FEE_RATE = 1.0f;        // 100% of rent/day per late day
+const float LATE_FEE_RATE = 0.5f;        // 50% of rent/day per late day
 const float EARLY_PENALTY_RATE = 0.5f;   // 50% of rent/day for early return
 class Billing {
 public:
@@ -425,9 +425,9 @@ public:
         float rentPerDay = v->getRentPerDay();
         int baseRent = v->calculateRent(actualDays);
         
-        // Late fee = same as rent/day × number of late days
+        // Late fee = half day rent
         // Early return penalty = half day rent
-        int lateFee = (lateDays > 0) ? static_cast<int>(lateDays * rentPerDay * LATE_FEE_RATE) : 0;
+        int lateFee = (lateDays > 0) ? static_cast<int>(rentPerDay * LATE_FEE_RATE) : 0;
         int earlyPenalty = (actualDays < expectedDays) ? static_cast<int>(rentPerDay * EARLY_PENALTY_RATE) : 0;
 
         int totalBill = baseRent + lateFee + earlyPenalty;
